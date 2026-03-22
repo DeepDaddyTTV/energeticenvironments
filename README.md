@@ -2,12 +2,14 @@
 
 Energetic Environments is a NeoForge technology mod for modern Minecraft focused on large-scale, multiblock-driven infrastructure. The mod is built around turning the world itself into an industrial input: wind, heat, fluids, terrain, weather, and biome conditions become part of your power and resource network instead of background scenery.
 
-This repository is the initial foundation for the project and targets the latest official `1.21.x` NeoForge MDK baseline available at scaffold time:
+This repository is the initial foundation for the project and targets the latest stable NeoForge `1.21.x` baseline available at update time:
 
-- Minecraft `1.21.11`
-- NeoForge `21.11.38-beta`
+- Minecraft `1.21.10`
+- NeoForge `21.10.64`
 - Java `21`
 - License: MIT
+
+`1.21.11` was available only on a beta NeoForge branch when this was updated, so the project is intentionally pinned to the newest non-beta `1.21.x` release line instead.
 
 ## Design Direction
 
@@ -57,7 +59,7 @@ The project is being set up for compatibility-first development on current NeoFo
 
 ## Publishing and Contribution
 
-Source: [github.com/MMFQDEATH/energeticenvironments](https://github.com/MMFQDEATH/energeticenvironments)
-Issues: [github.com/MMFQDEATH/energeticenvironments/issues](https://github.com/MMFQDEATH/energeticenvironments/issues)
+Source: [github.com/DeepDaddyTTV/energeticenvironments](https://github.com/DeepDaddyTTV/energeticenvironments)
+Issues: [github.com/DeepDaddyTTV/energeticenvironments/issues](https://github.com/DeepDaddyTTV/energeticenvironments/issues)
 
 All project branding in this repository is currently attributed to `DeepDaddyTTV`.
