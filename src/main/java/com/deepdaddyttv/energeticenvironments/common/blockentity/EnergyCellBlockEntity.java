@@ -19,9 +19,7 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
-import net.neoforged.neoforge.transfer.energy.EnergyHandler;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 
 public final class EnergyCellBlockEntity extends BlockEntity implements MenuProvider {
     public static final int DATA_COUNT = 2;
@@ -52,7 +50,7 @@ public final class EnergyCellBlockEntity extends BlockEntity implements MenuProv
         super(EEBlockEntities.ENERGY_CELL.get(), pos, blockState);
     }
 
-    public EnergyHandler getEnergyHandler() {
+    public IEnergyStorage getEnergyHandler() {
         return energyStorage;
     }
 
@@ -80,15 +78,15 @@ public final class EnergyCellBlockEntity extends BlockEntity implements MenuProv
     }
 
     @Override
-    protected void saveAdditional(final ValueOutput output) {
-        super.saveAdditional(output);
-        output.putInt("energy", energyStorage.getStoredEnergy());
+    protected void saveAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.putInt("energy", energyStorage.getStoredEnergy());
     }
 
     @Override
-    protected void loadAdditional(final ValueInput input) {
-        super.loadAdditional(input);
-        energyStorage.loadStoredEnergy(input.getIntOr("energy", 0));
+    protected void loadAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        energyStorage.loadStoredEnergy(tag.getInt("energy"));
     }
 
     @Override

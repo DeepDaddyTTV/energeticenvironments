@@ -2,8 +2,6 @@ package com.deepdaddyttv.energeticenvironments.registry;
 
 import com.deepdaddyttv.energeticenvironments.EnergeticEnvironments;
 import com.deepdaddyttv.energeticenvironments.common.item.WindSurveyToolItem;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
@@ -16,8 +14,9 @@ public final class EEItems {
     public static final DeferredItem<BlockItem> WIND_GENERATOR_CONTROLLER = ITEMS.registerSimpleBlockItem(EEBlocks.WIND_GENERATOR_CONTROLLER);
     public static final DeferredItem<BlockItem> WIND_GENERATOR_CONNECTOR = ITEMS.registerSimpleBlockItem(EEBlocks.WIND_GENERATOR_CONNECTOR);
     public static final DeferredItem<BlockItem> ENERGY_CELL = ITEMS.registerSimpleBlockItem(EEBlocks.ENERGY_CELL);
-    public static final DeferredItem<WindSurveyToolItem> WIND_SURVEY_TOOL = ITEMS.register("wind_survey_tool",
-            id -> new WindSurveyToolItem(new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, id))));
+    public static final DeferredItem<WindSurveyToolItem> WIND_SURVEY_TOOL = ITEMS.registerItem("wind_survey_tool",
+            WindSurveyToolItem::new,
+            new Item.Properties().stacksTo(1));
 
     private EEItems() {}
 

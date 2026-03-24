@@ -1,8 +1,8 @@
 package com.deepdaddyttv.energeticenvironments.common.energy;
 
-import net.neoforged.neoforge.transfer.energy.SimpleEnergyHandler;
+import net.neoforged.neoforge.energy.EnergyStorage;
 
-public final class NotifyingEnergyHandler extends SimpleEnergyHandler {
+public final class NotifyingEnergyHandler extends EnergyStorage {
     private final Runnable onChanged;
 
     public NotifyingEnergyHandler(final int capacity, final int maxInsert, final int maxExtract, final Runnable onChanged) {
@@ -13,7 +13,7 @@ public final class NotifyingEnergyHandler extends SimpleEnergyHandler {
     public void configure(final int capacity, final int maxInsert, final int maxExtract) {
         final int previous = this.energy;
         this.capacity = Math.max(0, capacity);
-        this.maxInsert = Math.max(0, maxInsert);
+        this.maxReceive = Math.max(0, maxInsert);
         this.maxExtract = Math.max(0, maxExtract);
         this.energy = Math.min(this.energy, this.capacity);
         if (previous != this.energy) {
@@ -22,29 +22,19 @@ public final class NotifyingEnergyHandler extends SimpleEnergyHandler {
     }
 
     public int insertImmediate(final int amount) {
-        if (amount <= 0 || capacity <= energy || maxInsert <= 0) {
-            return 0;
-        }
-        final int previous = this.energy;
-        final int inserted = Math.min(amount, Math.min(maxInsert, capacity - energy));
-        this.energy += inserted;
-        onEnergyChanged(previous);
-        return inserted;
+        return receiveEnergy(amount, false);
     }
 
     public int extractImmediate(final int amount) {
-        if (amount <= 0 || energy <= 0 || maxExtract <= 0) {
-            return 0;
-        }
-        final int previous = this.energy;
-        final int extracted = Math.min(amount, Math.min(maxExtract, energy));
-        this.energy -= extracted;
-        onEnergyChanged(previous);
-        return extracted;
+        return extractEnergy(amount, false);
     }
 
     public void loadStoredEnergy(final int amount) {
-        set(Math.max(0, amount));
+        final int previous = this.energy;
+        this.energy = Math.min(Math.max(0, amount), this.capacity);
+        if (previous != this.energy) {
+            onEnergyChanged(previous);
+        }
     }
 
     public int getStoredEnergy() {
@@ -56,7 +46,26 @@ public final class NotifyingEnergyHandler extends SimpleEnergyHandler {
     }
 
     @Override
-    protected void onEnergyChanged(final int previousAmount) {
+    public int receiveEnergy(final int maxReceive, final boolean simulate) {
+        final int previous = this.energy;
+        final int received = super.receiveEnergy(maxReceive, simulate);
+        if (!simulate && received > 0 && previous != this.energy) {
+            onEnergyChanged(previous);
+        }
+        return received;
+    }
+
+    @Override
+    public int extractEnergy(final int maxExtract, final boolean simulate) {
+        final int previous = this.energy;
+        final int extracted = super.extractEnergy(maxExtract, simulate);
+        if (!simulate && extracted > 0 && previous != this.energy) {
+            onEnergyChanged(previous);
+        }
+        return extracted;
+    }
+
+    private void onEnergyChanged(final int previousAmount) {
         this.onChanged.run();
     }
 }

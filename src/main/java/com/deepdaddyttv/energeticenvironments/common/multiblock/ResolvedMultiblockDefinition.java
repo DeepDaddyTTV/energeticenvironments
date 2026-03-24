@@ -110,7 +110,7 @@ public record ResolvedMultiblockDefinition(
     }
 
     public Block controllerBlock() {
-        return BuiltInRegistries.BLOCK.getValue(definition.controllerBlock());
+        return BuiltInRegistries.BLOCK.get(definition.controllerBlock());
     }
 
     public Map<MaterialGroup, Integer> createZeroedGroupMap() {

@@ -25,7 +25,7 @@ public record BlockRequirement(MaterialGroup group, Optional<ResourceLocation> b
 
     public boolean matches(final BlockState state) {
         if (block.isPresent()) {
-            final Block expected = BuiltInRegistries.BLOCK.getValue(block.get());
+            final Block expected = BuiltInRegistries.BLOCK.get(block.get());
             return expected != null && state.is(expected);
         }
         if (tag.isPresent()) {

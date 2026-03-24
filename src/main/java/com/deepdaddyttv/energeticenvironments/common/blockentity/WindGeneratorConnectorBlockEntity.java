@@ -8,18 +8,16 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
-import net.neoforged.neoforge.transfer.energy.EnergyHandler;
-import net.neoforged.neoforge.transfer.transaction.TransactionContext;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 
 public final class WindGeneratorConnectorBlockEntity extends BlockEntity {
     @Nullable
     private BlockPos controllerPos;
-    private final EnergyHandler energyProxy = new EnergyProxy();
+    private final IEnergyStorage energyProxy = new EnergyProxy();
 
     public WindGeneratorConnectorBlockEntity(final BlockPos pos, final BlockState blockState) {
         super(EEBlockEntities.WIND_GENERATOR_CONNECTOR.get(), pos, blockState);
@@ -41,7 +39,7 @@ public final class WindGeneratorConnectorBlockEntity extends BlockEntity {
     }
 
     @Nullable
-    public EnergyHandler getEnergyHandler() {
+    public IEnergyStorage getEnergyHandler() {
         return getController() == null ? null : energyProxy;
     }
 
@@ -57,18 +55,17 @@ public final class WindGeneratorConnectorBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(final ValueOutput output) {
-        super.saveAdditional(output);
+    protected void saveAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
         if (controllerPos != null) {
-            output.putLong("controller_pos", controllerPos.asLong());
+            tag.putLong("controller_pos", controllerPos.asLong());
         }
     }
 
     @Override
-    protected void loadAdditional(final ValueInput input) {
-        super.loadAdditional(input);
-        final long value = input.getLongOr("controller_pos", Long.MIN_VALUE);
-        controllerPos = value == Long.MIN_VALUE ? null : BlockPos.of(value);
+    protected void loadAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        controllerPos = tag.contains("controller_pos") ? BlockPos.of(tag.getLong("controller_pos")) : null;
     }
 
     @Override
@@ -81,28 +78,38 @@ public final class WindGeneratorConnectorBlockEntity extends BlockEntity {
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
-    private final class EnergyProxy implements EnergyHandler {
+    private final class EnergyProxy implements IEnergyStorage {
         @Override
-        public long getAmountAsLong() {
+        public int getEnergyStored() {
             final WindGeneratorControllerBlockEntity controller = getController();
-            return controller == null ? 0L : controller.getStoredEnergy();
+            return controller == null ? 0 : controller.getStoredEnergy();
         }
 
         @Override
-        public long getCapacityAsLong() {
+        public int getMaxEnergyStored() {
             final WindGeneratorControllerBlockEntity controller = getController();
-            return controller == null ? 0L : controller.getEnergyCapacity();
+            return controller == null ? 0 : controller.getEnergyCapacity();
         }
 
         @Override
-        public int insert(final int amount, final TransactionContext transaction) {
+        public int receiveEnergy(final int amount, final boolean simulate) {
             return 0;
         }
 
         @Override
-        public int extract(final int amount, final TransactionContext transaction) {
+        public int extractEnergy(final int amount, final boolean simulate) {
             final WindGeneratorControllerBlockEntity controller = getController();
-            return controller == null ? 0 : controller.extractThroughConnector(amount, transaction);
+            return controller == null ? 0 : controller.extractThroughConnector(amount, simulate);
+        }
+
+        @Override
+        public boolean canExtract() {
+            return true;
+        }
+
+        @Override
+        public boolean canReceive() {
+            return false;
         }
     }
 }

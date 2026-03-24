@@ -13,19 +13,19 @@ import com.deepdaddyttv.energeticenvironments.registry.EEBlockEntities;
 import com.deepdaddyttv.energeticenvironments.registry.EEBlocks;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.ItemStackWithSlot;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
+import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -38,9 +38,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
-import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 
 public final class WindGeneratorControllerBlockEntity extends BlockEntity implements MenuProvider, Container {
     public static final int CONTAINER_SIZE = 36;
@@ -135,12 +132,12 @@ public final class WindGeneratorControllerBlockEntity extends BlockEntity implem
         return menuData;
     }
 
-    public int extractThroughConnector(final int amount, final TransactionContext transaction) {
+    public int extractThroughConnector(final int amount, final boolean simulate) {
         final ResolvedMultiblockDefinition active = getActiveDefinition();
         if (!formed || active == null) {
             return 0;
         }
-        return energyStorage.extract(Math.min(amount, active.definition().tier().maxOutput()), transaction);
+        return energyStorage.extractEnergy(Math.min(amount, active.definition().tier().maxOutput()), simulate);
     }
 
     public void onRemoved() {
@@ -173,36 +170,38 @@ public final class WindGeneratorControllerBlockEntity extends BlockEntity implem
     }
 
     @Override
-    protected void saveAdditional(final ValueOutput output) {
-        super.saveAdditional(output);
-        final ValueOutput.TypedOutputList<ItemStackWithSlot> itemList = output.list("inventory", ItemStackWithSlot.CODEC);
+    protected void saveAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+
+        final NonNullList<ItemStack> items = NonNullList.withSize(inventory.getContainerSize(), ItemStack.EMPTY);
         for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
-            final ItemStack stack = inventory.getItem(slot);
-            if (!stack.isEmpty()) {
-                itemList.add(new ItemStackWithSlot(slot, stack));
-            }
+            items.set(slot, inventory.getItem(slot));
         }
-        output.putInt("selected_tier_index", selectedTierIndex);
-        output.putBoolean("formed", formed);
-        output.putInt("energy", energyStorage.getStoredEnergy());
+        ContainerHelper.saveAllItems(tag, items, registries);
+
+        tag.putInt("selected_tier_index", selectedTierIndex);
+        tag.putBoolean("formed", formed);
+        tag.putInt("energy", energyStorage.getStoredEnergy());
         if (activeDefinitionId != null) {
-            output.putString("active_definition", activeDefinitionId.toString());
+            tag.putString("active_definition", activeDefinitionId.toString());
         }
     }
 
     @Override
-    protected void loadAdditional(final ValueInput input) {
-        super.loadAdditional(input);
+    protected void loadAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
         inventory.clearContent();
-        input.listOrEmpty("inventory", ItemStackWithSlot.CODEC).forEach(itemStackWithSlot -> {
-            if (itemStackWithSlot.isValidInContainer(inventory.getContainerSize())) {
-                inventory.setItem(itemStackWithSlot.slot(), itemStackWithSlot.stack());
-            }
-        });
-        selectedTierIndex = Math.max(0, input.getIntOr("selected_tier_index", 0));
-        formed = input.getBooleanOr("formed", false);
-        energyStorage.loadStoredEnergy(input.getIntOr("energy", 0));
-        final String definitionId = input.getStringOr("active_definition", "");
+
+        final NonNullList<ItemStack> items = NonNullList.withSize(inventory.getContainerSize(), ItemStack.EMPTY);
+        ContainerHelper.loadAllItems(tag, items, registries);
+        for (int slot = 0; slot < items.size(); slot++) {
+            inventory.setItem(slot, items.get(slot));
+        }
+
+        selectedTierIndex = Math.max(0, tag.getInt("selected_tier_index"));
+        formed = tag.getBoolean("formed");
+        energyStorage.loadStoredEnergy(tag.getInt("energy"));
+        final String definitionId = tag.getString("active_definition");
         activeDefinitionId = definitionId.isBlank() ? null : ResourceLocation.tryParse(definitionId);
     }
 

@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
 
 public final class MultiblockDefinitionManager {
     private static final MultiblockDefinitionManager INSTANCE = new MultiblockDefinitionManager();
@@ -17,8 +17,8 @@ public final class MultiblockDefinitionManager {
 
     private MultiblockDefinitionManager() {}
 
-    public static void registerReloadListener(final AddServerReloadListenersEvent event) {
-        event.addListener(com.deepdaddyttv.energeticenvironments.common.EEConstants.id("multiblock_definitions"), new MultiblockDefinitionReloadListener(INSTANCE));
+    public static void registerReloadListener(final AddReloadListenerEvent event) {
+        event.addListener(new MultiblockDefinitionReloadListener(INSTANCE));
     }
 
     void replaceDefinitions(final Map<ResourceLocation, ResolvedMultiblockDefinition> byId, final List<ResolvedMultiblockDefinition> ordered) {

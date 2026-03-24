@@ -2,14 +2,14 @@
 
 Energetic Environments is a NeoForge technology mod for modern Minecraft focused on large-scale, multiblock-driven infrastructure. The mod is built around turning the world itself into an industrial input: wind, heat, fluids, terrain, weather, and biome conditions become part of your power and resource network instead of background scenery.
 
-This repository is the initial foundation for the project and targets the latest stable NeoForge `1.21.x` baseline available at update time:
+This repository is the initial foundation for the project and now targets a compatibility-first `1.21.x` strategy with primary support on the stable `1.21.1` NeoForge line:
 
-- Minecraft `1.21.10`
-- NeoForge `21.10.64`
+- Minecraft `1.21.1`
+- NeoForge `21.1.219`
 - Java `21`
 - License: MIT
 
-`1.21.11` was available only on a beta NeoForge branch when this was updated, so the project is intentionally pinned to the newest non-beta `1.21.x` release line instead.
+The codebase is being kept conservative so it is easier to validate on other `1.21.x` environments later, but `1.21.1` is the primary supported baseline and the version we will target first when testing and debugging.
 
 ## Design Direction
 
@@ -27,7 +27,7 @@ Planned examples include environmental harvesters, large rotating or fluid-drive
 
 This starter commit includes:
 
-- A clean NeoForge ModDevGradle setup for the current `1.21.x` line
+- A clean NeoForge ModDevGradle setup centered on `1.21.1` with a broad-compatibility posture for `1.21.x`
 - GitHub Actions build automation
 - Initial mod metadata for Energetic Environments
 - A minimal Java entrypoint ready for block, item, menu, recipe, and datagen expansion
@@ -50,12 +50,18 @@ Common tasks:
 
 ## Compatibility Approach
 
-The project is being set up for compatibility-first development on current NeoForge rather than invasive loader hacks. Early architecture decisions will favor:
+The project is being set up for compatibility-first development on NeoForge rather than invasive loader hacks. Early architecture decisions will favor:
 
 - Standard NeoForge registration and data-driven content
 - Clean separation between power systems, machines, and world interaction logic
 - Future-friendly integration points for recipes, automation, and addon support
 - Conservative baseline choices that make collaboration and maintenance easier
+
+In practice, that means:
+
+- Primary support and first-line testing on Minecraft `1.21.1`
+- Avoiding unnecessary dependencies on patch-specific APIs where possible
+- Expanding validated support across `1.21.x` only after explicit test coverage on those lines
 
 ## Publishing and Contribution
 

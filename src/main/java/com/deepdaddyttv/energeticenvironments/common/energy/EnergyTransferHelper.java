@@ -4,13 +4,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.transfer.energy.EnergyHandler;
-import net.neoforged.neoforge.transfer.transaction.Transaction;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 
 public final class EnergyTransferHelper {
     private EnergyTransferHelper() {}
 
-    public static int pushEnergyToNeighbors(final Level level, final BlockPos sourcePos, final EnergyHandler source, final int maxTransfer) {
+    public static int pushEnergyToNeighbors(final Level level, final BlockPos sourcePos, final IEnergyStorage source, final int maxTransfer) {
         int moved = 0;
         int remaining = maxTransfer;
 
@@ -20,33 +19,35 @@ public final class EnergyTransferHelper {
             }
 
             final BlockPos targetPos = sourcePos.relative(direction);
-            final EnergyHandler target = level.getCapability(Capabilities.Energy.BLOCK, targetPos, direction.getOpposite());
-            if (target == null) {
+            final IEnergyStorage target = level.getCapability(Capabilities.EnergyStorage.BLOCK, targetPos, direction.getOpposite());
+            if (target == null || !target.canReceive()) {
                 continue;
             }
 
-            final int accepted = simulateInsert(target, remaining);
+            final int accepted = target.receiveEnergy(remaining, true);
             if (accepted <= 0) {
                 continue;
             }
 
-            try (Transaction transaction = Transaction.openRoot()) {
-                final int extracted = source.extract(accepted, transaction);
-                final int inserted = target.insert(extracted, transaction);
-                if (extracted > 0 && extracted == inserted) {
-                    transaction.commit();
-                    remaining -= inserted;
-                    moved += inserted;
-                }
+            final int extracted = source.extractEnergy(accepted, false);
+            if (extracted <= 0) {
+                continue;
             }
+
+            final int inserted = target.receiveEnergy(extracted, false);
+            if (inserted <= 0) {
+                source.receiveEnergy(extracted, false);
+                continue;
+            }
+
+            if (inserted < extracted) {
+                source.receiveEnergy(extracted - inserted, false);
+            }
+
+            remaining -= inserted;
+            moved += inserted;
         }
 
         return moved;
-    }
-
-    private static int simulateInsert(final EnergyHandler target, final int amount) {
-        try (Transaction transaction = Transaction.openRoot()) {
-            return target.insert(amount, transaction);
-        }
     }
 }
