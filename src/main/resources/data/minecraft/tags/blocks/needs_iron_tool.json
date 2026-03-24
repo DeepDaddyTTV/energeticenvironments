@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "energeticenvironments:wind_generator_controller",
+    "energeticenvironments:wind_generator_connector",
+    "energeticenvironments:energy_cell"
+  ]
+}

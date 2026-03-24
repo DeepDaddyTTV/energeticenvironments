@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:smooth_stone",
+    "minecraft:copper_block",
+    "minecraft:iron_block",
+    "minecraft:tuff_bricks"
+  ]
+}

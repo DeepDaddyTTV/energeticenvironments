@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "energeticenvironments:block/energy_cell"
+    }
+  }
+}

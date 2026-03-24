@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "energeticenvironments:block/wind_generator_connector"
+    }
+  }
+}

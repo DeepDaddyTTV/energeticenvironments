@@ -1,0 +1,79 @@
+{
+  "family": "energeticenvironments:wind_generator",
+  "tier": {
+    "tier": 1,
+    "display_name": "Tier 1 Wind Generator",
+    "energy_capacity": 20000,
+    "base_generation": 24,
+    "max_output": 64
+  },
+  "controller_block": "energeticenvironments:wind_generator_controller",
+  "connectors": [
+    {
+      "symbol": "O"
+    }
+  ],
+  "auto_build": {
+    "allow_replaceable_blocks": true,
+    "blocks_per_operation": 32
+  },
+  "environment": [
+    {
+      "type": "altitude",
+      "min_y": 64,
+      "max_y": 196,
+      "min_multiplier": 0.55,
+      "max_multiplier": 1.2
+    },
+    {
+      "type": "sky_visibility",
+      "visible_multiplier": 1.0,
+      "blocked_multiplier": 0.12
+    },
+    {
+      "type": "weather",
+      "clear_multiplier": 1.0,
+      "rain_multiplier": 1.1,
+      "thunder_multiplier": 1.25
+    }
+  ],
+  "palette": {
+    "C": {
+      "group": "controller",
+      "block": "energeticenvironments:wind_generator_controller"
+    },
+    "O": {
+      "group": "connector",
+      "block": "energeticenvironments:wind_generator_connector"
+    },
+    "T": {
+      "group": "tower",
+      "tag": "energeticenvironments:wind_tower_materials"
+    },
+    "B": {
+      "group": "blade",
+      "tag": "energeticenvironments:wind_blade_materials"
+    },
+    "H": {
+      "group": "hub",
+      "tag": "energeticenvironments:wind_hub_materials"
+    }
+  },
+  "layers": [
+    [
+      "...",
+      ".C.",
+      ".O."
+    ],
+    [
+      "...",
+      ".T.",
+      "..."
+    ],
+    [
+      ".B.",
+      "BHB",
+      ".B."
+    ]
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "energeticenvironments:block/wind_generator_controller"
+    },
+    "facing=east": {
+      "model": "energeticenvironments:block/wind_generator_controller",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "energeticenvironments:block/wind_generator_controller",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "energeticenvironments:block/wind_generator_controller",
+      "y": 270
+    }
+  }
+}

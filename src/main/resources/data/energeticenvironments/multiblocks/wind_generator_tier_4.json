@@ -1,0 +1,127 @@
+{
+  "family": "energeticenvironments:wind_generator",
+  "tier": {
+    "tier": 4,
+    "display_name": "Tier 4 Wind Generator",
+    "energy_capacity": 750000,
+    "base_generation": 900,
+    "max_output": 4096
+  },
+  "controller_block": "energeticenvironments:wind_generator_controller",
+  "connectors": [
+    {
+      "symbol": "O"
+    }
+  ],
+  "auto_build": {
+    "allow_replaceable_blocks": true,
+    "blocks_per_operation": 96
+  },
+  "environment": [
+    {
+      "type": "altitude",
+      "min_y": 76,
+      "max_y": 260,
+      "min_multiplier": 0.65,
+      "max_multiplier": 1.55
+    },
+    {
+      "type": "sky_visibility",
+      "visible_multiplier": 1.0,
+      "blocked_multiplier": 0.08
+    },
+    {
+      "type": "weather",
+      "clear_multiplier": 1.0,
+      "rain_multiplier": 1.18,
+      "thunder_multiplier": 1.34
+    }
+  ],
+  "palette": {
+    "C": {
+      "group": "controller",
+      "block": "energeticenvironments:wind_generator_controller"
+    },
+    "O": {
+      "group": "connector",
+      "block": "energeticenvironments:wind_generator_connector"
+    },
+    "T": {
+      "group": "tower",
+      "tag": "energeticenvironments:wind_tower_materials"
+    },
+    "B": {
+      "group": "blade",
+      "tag": "energeticenvironments:wind_blade_materials"
+    },
+    "H": {
+      "group": "hub",
+      "tag": "energeticenvironments:wind_hub_materials"
+    }
+  },
+  "layers": [
+    [
+      ".......",
+      ".......",
+      ".......",
+      "...C...",
+      "...O...",
+      ".......",
+      "......."
+    ],
+    [
+      ".......",
+      ".......",
+      ".......",
+      "...T...",
+      ".......",
+      ".......",
+      "......."
+    ],
+    [
+      ".......",
+      ".......",
+      ".......",
+      "...T...",
+      ".......",
+      ".......",
+      "......."
+    ],
+    [
+      ".......",
+      ".......",
+      ".......",
+      "...T...",
+      ".......",
+      ".......",
+      "......."
+    ],
+    [
+      ".......",
+      ".......",
+      ".......",
+      "...T...",
+      ".......",
+      ".......",
+      "......."
+    ],
+    [
+      ".......",
+      ".......",
+      ".......",
+      "...T...",
+      ".......",
+      ".......",
+      "......."
+    ],
+    [
+      "...B...",
+      "...B...",
+      "...B...",
+      "BBBHBBB",
+      "...B...",
+      "...B...",
+      "...B..."
+    ]
+  ]
+}
