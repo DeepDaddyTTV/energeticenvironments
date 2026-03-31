@@ -200,6 +200,22 @@ tasks.named('test', Test).configure {
     useJUnitPlatform()
 }
 
+tasks.named('build').configure {
+    mustRunAfter tasks.named('runData')
+}
+
+tasks.named('runGameTestServer').configure {
+    mustRunAfter tasks.named('build')
+}
+
+tasks.register('verifyMod') {
+    group = 'verification'
+    description = 'Runs data generation, unit tests, build verification, and required game tests.'
+    dependsOn tasks.named('runData')
+    dependsOn tasks.named('build')
+    dependsOn tasks.named('runGameTestServer')
+}
+
 // IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.
 idea {
     module {

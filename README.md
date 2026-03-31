@@ -46,7 +46,14 @@ Common tasks:
 ./gradlew runClient
 ./gradlew runServer
 ./gradlew build
+./gradlew verifyMod
 ```
+
+Quality gate:
+
+- `./gradlew verifyMod` is the project verification command used by CI
+- It runs datagen, unit tests, build verification, and required NeoForge GameTests
+- New gameplay features should include unit tests for pure logic and GameTests for in-world behavior before they are considered ready
 
 ## Compatibility Approach
 
